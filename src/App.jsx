@@ -9,25 +9,54 @@ import ProfilePage from "./pages/ProfilePage";
 import Customers from "./pages/Customers";
 import Profile from "./pages/Profile";
 
+
+// -------------------------------
+// AUTH CHECK FUNCTION
+// -------------------------------
+const isAuthenticated = () => {
+  return localStorage.getItem("authToken");  // or sessionStorage
+};
+
+// -------------------------------
+// PROTECTED ROUTE WRAPPER
+// -------------------------------
+const ProtectedRoute = ({ children }) => {
+  if (!isAuthenticated()) {
+    return <Navigate to="/signin" replace />;
+  }
+  return children;
+};
+
+
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Default redirect to Signin */}
+
+        {/* Default route → Sign in */}
         <Route path="/" element={<Navigate to="/signin" />} />
 
-        {/* Auth routes */}
+        {/* Public routes */}
         <Route path="/signin" element={<Signin />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
 
-        {/* Layout wrapper for main routes */}
-        <Route path="/" element={<Layout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/management" element={<Management />} />
-          <Route path="/profile/:id" element={<ProfilePage /> } />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/profile" element={<Profile />} />
+
+        {/* Protected routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="management" element={<Management />} />
+          <Route path="profile/:id" element={<ProfilePage />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
+
 
         {/* 404 Page */}
         <Route

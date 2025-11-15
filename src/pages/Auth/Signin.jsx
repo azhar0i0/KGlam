@@ -16,11 +16,15 @@ function Signin() {
     const validPassword = "admin.me";
 
     if (email === validEmail && password === validPassword) {
-      navigate("/dashboard");
+      // Set auth token so protected route works
+      localStorage.setItem("authToken", "logged_in");
+
+      navigate("/dashboard", { replace: true });
     } else {
       setError("Invalid email or password");
     }
   };
+
 
   return (
     <section className="flex flex-col md:flex-row h-screen overflow-hidden bg-white">
