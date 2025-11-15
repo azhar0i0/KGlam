@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+body{
+  background-color: white;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom mobile-friendly spacing without breaking grid */
+@media (max-width: 640px) {
+  .DasgboardCardsCustomCSS {
+    margin-right: 0 !important;
+  }
+
+  /* Ensure consistent padding within cards */
+  .DasgboardCardsCustomCSS:last-child {
+    margin-bottom: 0;
+  }
+}

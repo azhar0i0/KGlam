@@ -1,0 +1,11 @@
+/* Add right margin on mobile cards only */
+@media (max-width: 640px) {
+  .mobile-card-spacing {
+    margin-right: 12px; /* ≈ Tailwind’s mr-3 */
+  }
+
+  /* Make sure last card in row doesn’t get extra space */
+  .mobile-card-spacing:last-child {
+    margin-right: 0;
+  }
+}
