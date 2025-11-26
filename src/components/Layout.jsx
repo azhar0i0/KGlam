@@ -8,7 +8,7 @@ import {
     FaBars,
     FaTimes,
 } from "react-icons/fa";
-    import { MdDashboard } from "react-icons/md";
+import { MdDashboard } from "react-icons/md";
 import SaloonLogo from "@assets/SaloonLogo.png";
 
 const Layout = () => {
@@ -76,25 +76,44 @@ const Layout = () => {
                                 navigate(item.path);
                                 setMenuOpen(false);
                             }}
-                            className={`flex items-center py-4 rounded-xl w-full md:justify-center sm:justify-start md:p-2 md:py-3 pl-10 transition-all ${
-                                location.pathname === item.path
+                            className={`group relative flex items-center py-4 rounded-xl w-full md:justify-center sm:justify-start md:p-2 md:py-3 pl-10 transition-all ${location.pathname === item.path
                                     ? "bg-[#01ABAB] text-white"
                                     : "text-gray-500 hover:bg-[#01ABAB]/10 hover:text-[#01ABAB]"
-                            }`}
+                                }`}
                         >
                             {item.icon}
+
+                            {/* Label when menu is open */}
                             {menuOpen && (
                                 <span className="text-sm md:hidden block ml-2">{item.label}</span>
+                            )}
+
+                            {/* Tooltip when menu is closed */}
+                            {!menuOpen && (
+                                <span className="absolute left-15 bg-[#01ABAB] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-700 transition-opacity whitespace-nowrap">
+                                    {item.label}
+                                </span>
                             )}
                         </button>
                     ))}
 
                     <button
                         onClick={() => navigate("/signin")}
-                        className="flex items-center gap-3 py-4 rounded-xl text-gray-500 hover:bg-[#01ABAB]/10 hover:text-[#01ABAB] w-full md:justify-center md:p-2 md:py-3 justify-start pl-10"
+                        className="group relative flex items-center gap-3 py-4 rounded-xl text-gray-500 hover:bg-[#01ABAB]/10 hover:text-[#01ABAB] w-full md:justify-center md:p-2 md:py-3 justify-start pl-10"
                     >
                         <FaSignOutAlt size={20} />
-                        {menuOpen && <span className="text-sm md:hidden block">Sign Out</span>}
+
+                        {/* Label when menu is open */}
+                        {menuOpen && (
+                            <span className="text-sm md:hidden block ml-2">Sign Out</span>
+                        )}
+
+                        {/* Tooltip when menu is closed */}
+                        {!menuOpen && (
+                            <span className="absolute left-15 bg-[#01ABAB] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-700 transition-opacity whitespace-nowrap">
+                                Sign Out
+                            </span>
+                        )}
                     </button>
                 </nav>
 
@@ -156,7 +175,7 @@ const Layout = () => {
                                 </svg>
 
                                 {notiList.length > 0 && (
-                                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                    <span className="absolute top-1 right-1 w-2 h-2 bg-[#017575] rounded-full"></span>
                                 )}
                             </button>
 
@@ -189,10 +208,9 @@ const Layout = () => {
                                             <li
                                                 key={n.id}
                                                 className={`p-3 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-all 
-                                                    ${
-                                                        animatingId === n.id
-                                                            ? "animate-slide-out"
-                                                            : ""
+                                                    ${animatingId === n.id
+                                                        ? "animate-slide-out"
+                                                        : ""
                                                     }`}
                                                 onClick={() => {
                                                     setAnimatingId(n.id);

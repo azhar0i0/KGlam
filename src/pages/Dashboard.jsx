@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useMemo } from "react";
 import { Link } from 'react-router-dom';
 import { Line } from "react-chartjs-2";
-import './demi/style.css'
+import './demi/style.css';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,10 +19,35 @@ import {
 } from "@heroicons/react/24/outline";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
+import { motion } from "framer-motion"; // ✅ import motion
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
-// Custom dropdown component
+// Smooth number animation hook
+const useAnimatedNumber = (value, duration = 600) => {
+  const [animatedValue, setAnimatedValue] = useState(value);
+
+  React.useEffect(() => {
+    const start = animatedValue;
+    const end = value;
+    const diff = end - start;
+    const startTime = performance.now();
+
+    const animate = (time) => {
+      const progress = Math.min((time - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      setAnimatedValue(Math.round(start + diff * eased));
+
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  return animatedValue;
+};
+
+// Dropdown component
 const BookingDropdown = ({ selectedRange, setSelectedRange }) => {
   const options = ["Weekly", "Monthly", "6Months", "LifeTime"];
   return (
@@ -33,7 +58,6 @@ const BookingDropdown = ({ selectedRange, setSelectedRange }) => {
           <ChevronDownIcon className="w-5 h-5 ml-2 text-gray-400" />
         </Menu.Button>
       </div>
-
       <Transition
         as={Fragment}
         enter="transition ease-out duration-150"
@@ -49,9 +73,8 @@ const BookingDropdown = ({ selectedRange, setSelectedRange }) => {
               {({ active }) => (
                 <button
                   onClick={() => setSelectedRange(option)}
-                  className={`${
-                    active ? "bg-[#01ABAB] text-white" : "text-gray-700"
-                  } group flex rounded-xl items-center w-full px-4 py-2 text-sm transition-all border-gray-300`}
+                  className={`${active ? "bg-[#01ABAB] text-white" : "text-gray-700"
+                    } group flex rounded-xl items-center w-full px-4 py-2 text-sm transition-all border-gray-300`}
                 >
                   {option}
                 </button>
@@ -66,89 +89,107 @@ const BookingDropdown = ({ selectedRange, setSelectedRange }) => {
 
 const Dashboard = () => {
   const [selectedRange, setSelectedRange] = useState("Weekly");
-  const chartData = demoData[selectedRange];
 
-  // Calculate Active Users dynamically from the chart data
+  // Chart data with filled points
+  const chartData = {
+    ...demoData[selectedRange],
+    datasets: demoData[selectedRange].datasets.map(ds => ({
+      ...ds,
+      pointBackgroundColor: '#01ABAB',
+      pointBorderColor: '#01ABAB',
+      pointRadius: 5,
+      pointHoverRadius: 7,
+      pointHoverBackgroundColor: '#01ABAB',
+      pointHoverBorderColor: '#01ABAB',
+    })),
+  };
+
+  // Active users calculation
   const activeUsers = useMemo(() => {
-    if (!chartData || !chartData.datasets || chartData.datasets.length === 0)
-      return 0;
+    if (!chartData || !chartData.datasets || chartData.datasets.length === 0) return 0;
     const dataPoints = chartData.datasets[0].data;
     const avg = dataPoints.reduce((a, b) => a + b, 0);
-    return Math.round(avg); // Rounded average for display
+    return Math.round(avg);
   }, [chartData]);
+
+  const animatedActiveUsers = useAnimatedNumber(activeUsers);
+
+  // Motion variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
+  const chartVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.8 } },
+  };
 
   return (
     <div className="space-y-8">
       {/* Dashboard Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {/* Card 1 */}
-<Link to="/management">
-  <div className="DasgboardCardsCustomCSS mobile-card-spacing bg-gray-100 p-6 rounded-2xl flex justify-between items-center w-full shadow-sm hover:shadow-md transition-all cursor-pointer">
-    <div>
-      <h3 className="text-gray-700 text-lg font-semibold">
-        Total Saloons
-      </h3>
-      <p className="text-2xl font-bold text-gray-900 mt-1">765+</p>
-      <p className="text-xs text-gray-500 mt-1">
-        Showing Lifetime trend
-      </p>
-    </div>
-    <div className="flex-shrink-0">
-      <UserGroupIcon className="w-14 h-14 bg-[#01ABAB] text-white p-3 rounded-full" />
-    </div>
-  </div>
-</Link>
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+        initial="hidden"
+        animate="visible"
+        variants={{ visible: { transition: { staggerChildren: 0.2 } } }}
+      >
+        <motion.div variants={cardVariants}>
+          <Link to="/management">
+            <div className="DasgboardCardsCustomCSS mobile-card-spacing bg-gray-100 p-6 rounded-2xl flex justify-between items-center w-full shadow-sm hover:shadow-md transition-all cursor-pointer">
+              <div>
+                <h3 className="text-gray-700 text-lg font-semibold">Total Saloons</h3>
+                <p className="text-2xl font-bold text-gray-900 mt-1">765</p>
+                <p className="text-xs text-gray-500 mt-1">Showing Lifetime trend</p>
+              </div>
+              <div className="flex-shrink-0">
+                <UserGroupIcon className="w-14 h-14 bg-[#01ABAB] text-white p-3 rounded-full" />
+              </div>
+            </div>
+          </Link>
+        </motion.div>
 
-{/* Card 2 */}
-<Link to="/customers">
-  <div className="DasgboardCardsCustomCSS bg-gray-100 p-6 rounded-2xl flex justify-between items-center w-full shadow-sm hover:shadow-md transition-all cursor-pointer">
-    <div>
-      <h3 className="text-gray-700 text-lg font-semibold">
-        Total Customers
-      </h3>
-      <p className="text-2xl font-bold text-gray-900 mt-1">1000+</p>
-      <p className="text-xs text-gray-500 mt-1">
-        Showing Lifetime trend
-      </p>
-    </div>
-    <div className="flex-shrink-0">
-      <UsersIcon className="w-14 h-14 bg-[#01ABAB] text-white p-3 rounded-full" />
-    </div>
-  </div>
-</Link>
+        <motion.div variants={cardVariants}>
+          <Link to="/customers">
+            <div className="DasgboardCardsCustomCSS bg-gray-100 p-6 rounded-2xl flex justify-between items-center w-full shadow-sm hover:shadow-md transition-all cursor-pointer">
+              <div>
+                <h3 className="text-gray-700 text-lg font-semibold">Total Customers</h3>
+                <p className="text-2xl font-bold text-gray-900 mt-1">1000</p>
+                <p className="text-xs text-gray-500 mt-1">Showing Lifetime trend</p>
+              </div>
+              <div className="flex-shrink-0">
+                <UsersIcon className="w-14 h-14 bg-[#01ABAB] text-white p-3 rounded-full" />
+              </div>
+            </div>
+          </Link>
+        </motion.div>
 
-        {/* Card 3 - ACTIVE USERS (Dynamic) */}
-        <div className="DasgboardCardsCustomCSS bg-gray-100 p-6 rounded-2xl flex justify-between items-center w-full shadow-sm hover:shadow-md transition-all">
-          <div>
-            <h3 className="text-gray-700 text-lg font-semibold">
-              Active Users
-            </h3>
-            {/* Dynamically updates with chart */}
-            <p className="text-2xl font-bold text-gray-900 mt-1">
-              {activeUsers.toLocaleString()}
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Showing {selectedRange} trend
-            </p>
+        <motion.div variants={cardVariants}>
+          <div className="DasgboardCardsCustomCSS bg-gray-100 p-6 rounded-2xl flex justify-between items-center w-full shadow-sm hover:shadow-md transition-all">
+            <div>
+              <h3 className="text-gray-700 text-lg font-semibold">Active Users</h3>
+              <p className="text-2xl font-bold text-gray-900 mt-1">
+                {animatedActiveUsers.toLocaleString()}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">Showing {selectedRange} trend</p>
+            </div>
+            <div className="flex-shrink-0">
+              <CalendarIcon className="w-14 h-14 bg-[#01ABAB] text-white p-3 rounded-full" />
+            </div>
           </div>
-          <div className="flex-shrink-0">
-            <CalendarIcon className="w-14 h-14 bg-[#01ABAB] text-white p-3 rounded-full" />
-          </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Booking Graph */}
-      <div className="DasgboardCardsCustomCSS bg-gray-100 p-6 rounded-2xl shadow-sm w-full">
+      <motion.div
+        className="DasgboardCardsCustomCSS bg-gray-100 p-6 rounded-2xl shadow-sm w-full"
+        initial="hidden"
+        animate="visible"
+        variants={chartVariants}
+      >
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
-          <h2 className="text-lg font-bold text-gray-800">
-            Active Users in Saloon App
-          </h2>
-
-          {/* Custom Dropdown */}
-          <BookingDropdown
-            selectedRange={selectedRange}
-            setSelectedRange={setSelectedRange}
-          />
+          <h2 className="text-lg font-bold text-gray-800">Active Users in Saloon App</h2>
+          <BookingDropdown selectedRange={selectedRange} setSelectedRange={setSelectedRange} />
         </div>
 
         {/* Chart Wrapper */}
@@ -158,21 +199,33 @@ const Dashboard = () => {
             options={{
               responsive: true,
               maintainAspectRatio: false,
+              animation: {
+                duration: 1500, // duration of the animation in ms
+                easing: 'easeOutQuart', // smooth easing for line drawing
+              },
               plugins: {
                 legend: { display: false },
                 tooltip: { mode: "index", intersect: false },
               },
+              elements: {
+                line: {
+                  tension: 0.4, // smooth curves
+                },
+                point: {
+                  radius: 5,
+                  hoverRadius: 7,
+                  backgroundColor: '#01ABAB',
+                  borderColor: '#01ABAB',
+                },
+              },
               scales: {
                 x: { grid: { display: false } },
-                y: {
-                  beginAtZero: true,
-                  ticks: { stepSize: 50 },
-                },
+                y: { beginAtZero: true, ticks: { stepSize: 50 } },
               },
             }}
           />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

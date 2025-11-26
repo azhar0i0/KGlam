@@ -11,9 +11,8 @@ const generateCustomers = (count = 25) => {
       email: `customer${i}@gmail.com`,
       role: "Customer",
       status: statuses[Math.floor(Math.random() * statuses.length)],
-      image: `https://randomuser.me/api/portraits/${
-        i % 2 === 0 ? "men" : "women"
-      }/${(i * 7) % 70}.jpg`,
+      image: `https://randomuser.me/api/portraits/${i % 2 === 0 ? "men" : "women"
+        }/${(i * 7) % 70}.jpg`,
     });
   }
   return customers;
@@ -48,9 +47,9 @@ const Customers = () => {
       prev.map((customer) =>
         customer.id === id
           ? {
-              ...customer,
-              status: customer.status === "Active" ? "Deactivate" : "Active",
-            }
+            ...customer,
+            status: customer.status === "Active" ? "Deactivate" : "Active",
+          }
           : customer
       )
     );
@@ -113,60 +112,66 @@ const Customers = () => {
       </div>
 
       {/* Desktop Table */}
-<div className="hidden md:block overflow-x-auto rounded-lg">
-  <table className="w-full text-left border-collapse">
-    <thead>
-      <tr className="text-gray-600 text-sm bg-gray-50">
-        <th className="py-3 px-4 font-medium w-[30%]">Customer Name</th>
-        <th className="py-3 px-4 font-medium w-[30%]">Email</th>
-        <th className="py-3 px-4 font-medium w-[20%]">Role</th>
-        <th className="py-3 px-4 font-medium w-[20%] text-center">Status</th>
-      </tr>
-    </thead>
-    <tbody className="text-gray-700 text-sm">
-      {currentData.length > 0 ? (
-        currentData.map((customer) => (
-          <tr
-            key={customer.id}
-            className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-100"
-          >
-            <td className="py-3 px-4 flex items-center gap-3">
-              <img
-                src={customer.image}
-                alt={customer.name}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <span className="font-medium">{customer.name}</span>
-            </td>
-            <td className="py-3 px-4">{customer.email}</td>
-            <td className="py-3 px-4">{customer.role}</td>
-            <td className="py-3 px-4 text-center">
-              <button
-                onClick={() => handleToggle(customer.id)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${
-                  customer.status === "Active"
-                    ? "text-[#01ABAB] bg-[#E6F9F9]"
-                    : "text-red-500 bg-red-100"
-                }`}
-              >
-                ● {customer.status}
-              </button>
-            </td>
-          </tr>
-        ))
-      ) : (
-        <tr>
-          <td
-            colSpan="4"
-            className="text-center py-6 text-gray-400 italic"
-          >
-            No customers found
-          </td>
-        </tr>
-      )}
-    </tbody>
-  </table>
-</div>
+      <div className="hidden md:block overflow-x-auto rounded-lg">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="text-gray-600 text-sm bg-gray-50">
+              <th className="py-3 px-4 font-medium w-[30%]">Customer Name</th>
+              <th className="py-3 px-4 font-medium w-[30%]">Email</th>
+              <th className="py-3 px-4 font-medium w-[20%]">Role</th>
+              <th className="py-3 px-4 font-medium w-[20%] text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-700 text-sm">
+            {currentData.length > 0 ? (
+              currentData.map((customer) => (
+                <tr
+                  key={customer.id}
+                  className="hover:bg-gray-50 transition-all duration-200 border-b border-gray-100"
+                >
+                  <td className="py-3 px-4 flex items-center gap-3">
+                    <img
+                      src={customer.image}
+                      alt={customer.name}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                    <span className="font-medium">{customer.name}</span>
+                  </td>
+                  <td className="py-3 px-4">{customer.email}</td>
+                  <td className="py-3 px-4">{customer.role}</td>
+                  <td className="py-3 px-4 text-center">
+                    <div className="relative group inline-block">
+                      <button
+                        onClick={() => handleToggle(customer.id)}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${customer.status === "Active"
+                            ? "text-[#01ABAB] bg-[#E6F9F9]"
+                            : "text-red-500 bg-red-100"
+                          }`}
+                      >
+                        ● {customer.status}
+                      </button>
+
+                      {/* Tooltip */}
+                      <span className="absolute -top-8 w-25 left-1/2 -translate-x-1/2 bg-[#01ABAB] text-white text-xs px-1 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to {customer.status === "Active" ? "unactive" : "active"}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan="4"
+                  className="text-center py-6 text-gray-400 italic"
+                >
+                  No customers found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
 
       {/* Mobile Cards */}
@@ -193,11 +198,10 @@ const Customers = () => {
                 e.stopPropagation();
                 handleToggle(customer.id);
               }}
-              className={`text-sm px-3 py-1 mt-2 width-full rounded-full transition-all duration-300 ease-in-out ${
-                customer.status === "Active"
+              className={`text-sm px-3 py-1 mt-2 width-full rounded-full transition-all duration-300 ease-in-out ${customer.status === "Active"
                   ? "text-[#01ABAB] bg-[#01ABAB]/10 hover:bg-[#01ABAB]/20"
                   : "text-red-500 bg-red-100 hover:bg-red-200"
-              }`}
+                }`}
             >
               ● {customer.status}
             </button>
@@ -210,9 +214,8 @@ const Customers = () => {
         <button
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           disabled={currentPage === 1}
-          className={`flex items-center gap-2 border rounded-lg px-4 py-2 hover:bg-gray-50 ${
-            currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center gap-2 border rounded-lg px-4 py-2 hover:bg-gray-50 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
         >
           ← Previous
         </button>
@@ -227,11 +230,10 @@ const Customers = () => {
               <button
                 key={num}
                 onClick={() => setCurrentPage(num)}
-                className={`w-8 h-8 rounded-lg ${
-                  currentPage === num
+                className={`w-8 h-8 rounded-lg ${currentPage === num
                     ? "bg-[#01ABAB] text-white"
                     : "hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 {num}
               </button>
@@ -241,9 +243,8 @@ const Customers = () => {
         <button
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className={`flex items-center gap-2 border rounded-lg px-4 py-2 hover:bg-gray-50 ${
-            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center gap-2 border rounded-lg px-4 py-2 hover:bg-gray-50 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+            }`}
         >
           Next →
         </button>

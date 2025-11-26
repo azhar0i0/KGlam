@@ -34,8 +34,8 @@ const TableRow = memo(({ saloon, handleToggle }) => {
               handleToggle(saloon.id);
             }}
             className={`text-sm px-3 py-1 rounded-full transition-all duration-300 ease-in-out ${saloon.status === "Active"
-                ? "text-[#01ABAB] bg-[#01ABAB]/10 hover:bg-[#01ABAB]/20"
-                : "text-red-500 bg-red-100 hover:bg-red-200"
+              ? "text-[#01ABAB] bg-[#01ABAB]/10 hover:bg-[#01ABAB]/20"
+              : "text-red-500 bg-red-100 hover:bg-red-200"
               }`}
           >
             ● {saloon.status}
@@ -144,7 +144,7 @@ const Management = () => {
             </svg>
             {currentDate}
           </button>
-          <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#01ABAB] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
             Today's Date
           </span>
         </div>
@@ -199,17 +199,22 @@ const Management = () => {
                   <td className="py-3 px-4 text-center">
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // prevent row click when toggling status
+                        e.stopPropagation();
                         handleToggle(saloon.id);
                       }}
-                      className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ${saloon.status === "Active"
+                      className={`relative group px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 
+      ${saloon.status === "Active"
                           ? "text-[#01ABAB] bg-[#E6F9F9]"
                           : "text-red-500 bg-red-100"
                         }`}
                     >
+                      <span className="absolute -top-8 left-1/2 w-25 -translate-x-1/2 bg-[#01ABAB] text-white text-xs px-1 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to {saloon.status === "Active" ? "unactive" : "active"}
+                      </span>
                       ● {saloon.status}
                     </button>
                   </td>
+
                 </tr>
               ))
             ) : (
@@ -253,8 +258,8 @@ const Management = () => {
                     handleToggle(saloon.id);
                   }}
                   className={`text-xs px-2 py-1 rounded-full ${saloon.status === "Active"
-                      ? "bg-[#01ABAB]/10 text-[#01ABAB]"
-                      : "bg-red-100 text-red-500"
+                    ? "bg-[#01ABAB]/10 text-[#01ABAB]"
+                    : "bg-red-100 text-red-500"
                     }`}
                 >
                   ● {saloon.status}
@@ -303,8 +308,8 @@ const Management = () => {
                 key={num}
                 onClick={() => setCurrentPage(num)}
                 className={`w-8 h-8 rounded-lg ${currentPage === num
-                    ? "bg-[#01ABAB] text-white"
-                    : "hover:bg-gray-100"
+                  ? "bg-[#01ABAB] text-white"
+                  : "hover:bg-gray-100"
                   }`}
               >
                 {num}
